@@ -22,14 +22,12 @@ module.exports = {
       tagId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true,
         references: {
           model: {
             tableName: "Tags",
             key: "id",
           },
         },
-        onDelete: "CASCADE",
       },
       createdAt: {
         allowNull: false,
