@@ -7,17 +7,6 @@ const client = new OAuth2Client(process.env.CLIENT_ID);
 const { User } = require("../../models");
 const jwt = require("jsonwebtoken");
 
-// token 검증 및 user정보 반환
-async function verify(token) {
-  const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: process.env.CLIENT_ID,
-  });
-  const payload = ticket.getPayload();
-  return payload;
-}
-verify().catch(console.error);
-
 module.exports = {
   post: async (req, res) => {
     try {
@@ -25,7 +14,12 @@ module.exports = {
       //클라이언트에서 받아온 토큰에서 email,sub를 가져온다.
       const { token } = req.body;
       //토큰에서 email, sub값을 가져온다.
-      const { email, sub } = await verify(token);
+      const ticket = await client.verifyIdToken({
+        idToken: token,
+        // audience: process.env.CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      const { email, sub } = await payload;
       // 이메일을 비교해서 기존 유저가 있는지 여부 확인 및 존재하지 않을 경우 자동 생성
       const [user, created] = await User.findOrCreate({
         where: { email },
