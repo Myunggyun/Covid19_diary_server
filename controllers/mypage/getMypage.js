@@ -1,6 +1,7 @@
 const db = require("../../models");
 const jwt = require("jsonwebtoken");
-
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 // 마이페이지에서 정보를 가져올 때 사용합니다.
 module.exports = {
   get: async (req, res) => {
@@ -14,7 +15,16 @@ module.exports = {
       });
 
       const content = await db.Content.findAll({
-        where: { userId: decoded.id },
+        where: {
+          userId: decoded.id,
+          q_temp: { [Op.gt]: 0 },
+          q_resp: { [Op.gt]: 0 },
+          q_cough: { [Op.gt]: 0 },
+          q_appet: { [Op.gt]: 0 },
+          q_sleep: { [Op.gt]: 0 },
+          q_fatigue: { [Op.gt]: 0 },
+          q_psy: { [Op.gt]: 0 },
+        },
         attributes: [
           "id",
           "q_temp",
