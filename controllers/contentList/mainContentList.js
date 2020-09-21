@@ -28,33 +28,69 @@ module.exports = {
         `${url}?serviceKey=${serviceKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&startCreateDt=${startCreateDt}&endCreateDt=${endCreateDt}`,
         { headers: { "Access-Control-Allow-Origin": "*" } }
       );
-      // 응답에서 정보를 받아옵니다.
-      const {
-        stateDt,
-        stateTime,
-        decideCnt,
-        clearCnt,
-        examCnt,
-        careCnt,
-        deathCnt,
-      } = response.data.response.body.items.item;
-      // 정보를 coronaData객체에 담습니다.
-      const coronaData = {
-        stateDt,
-        stateTime,
-        decideCnt,
-        clearCnt,
-        examCnt,
-        careCnt,
-        deathCnt,
-      };
-      // content를 날짜 역순으로 6개만 찾습니다.
-      const contentList = await Content.findAll({
-        attributes: ["id", "title", "text", "createdAt"],
-        order: [["createdAt", "DESC"]],
-        limit: 6,
-      });
-      res.status(200).send({ contentList, coronaData });
+      if (response.data.response.body.items.item === undefined) {
+        const response = await axios.get(
+          `${url}?serviceKey=${serviceKey}&pageNo=${pageNo}&numOfRows=${numOfRows}&startCreateDt=${
+            startCreateDt - 1
+          }&endCreateDt=${endCreateDt - 1}`,
+          { headers: { "Access-Control-Allow-Origin": "*" } }
+        );
+        // 응답에서 정보를 받아옵니다.
+        const {
+          stateDt,
+          stateTime,
+          decideCnt,
+          clearCnt,
+          examCnt,
+          careCnt,
+          deathCnt,
+        } = response.data.response.body.items.item;
+        // 정보를 coronaData객체에 담습니다.
+        const coronaData = {
+          stateDt,
+          stateTime,
+          decideCnt,
+          clearCnt,
+          examCnt,
+          careCnt,
+          deathCnt,
+        };
+        // content를 날짜 역순으로 6개만 찾습니다.
+        const contentList = await Content.findAll({
+          attributes: ["id", "title", "text", "createdAt"],
+          order: [["createdAt", "DESC"]],
+          limit: 6,
+        });
+        res.status(200).send({ contentList, coronaData });
+      } else {
+        // 응답에서 정보를 받아옵니다.
+        const {
+          stateDt,
+          stateTime,
+          decideCnt,
+          clearCnt,
+          examCnt,
+          careCnt,
+          deathCnt,
+        } = response.data.response.body.items.item;
+        // 정보를 coronaData객체에 담습니다.
+        const coronaData = {
+          stateDt,
+          stateTime,
+          decideCnt,
+          clearCnt,
+          examCnt,
+          careCnt,
+          deathCnt,
+        };
+        // content를 날짜 역순으로 6개만 찾습니다.
+        const contentList = await Content.findAll({
+          attributes: ["id", "title", "text", "createdAt"],
+          order: [["createdAt", "DESC"]],
+          limit: 6,
+        });
+        res.status(200).send({ contentList, coronaData });
+      }
     } catch (err) {
       console.log(err);
       res.status(500).send("Server Error");
