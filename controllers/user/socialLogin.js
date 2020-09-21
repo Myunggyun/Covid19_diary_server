@@ -42,7 +42,7 @@ module.exports = {
         const socialSecret = req.app.get("jwt-social-secret");
         //배포 시 임시토큰 expiresIn: "1h"로 바꿔야 함.
         const socialToken = jwt.sign({ email: email }, socialSecret, {
-          expiresIn: 86400,
+          expiresIn: "1h",
         });
         //임시토큰 발급
         res.status(201).json({
