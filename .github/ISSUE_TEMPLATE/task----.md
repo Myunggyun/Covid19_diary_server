@@ -3,11 +3,11 @@ name: Task 템플릿
 about: Task Card 생성시 이용해주세요
 title: ''
 labels: ''
-assignees: shinuhyun
+assignees:
 
 ---
 
-Assignee : 신우현
+Assignee :
 
 Job Description
 - [ ]

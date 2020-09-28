@@ -1,3 +1,6 @@
+const path = require("path");
+require("dotenv").config(path.join(__dirname, "env"));
+
 const express = require("express");
 const app = express();
 const cors = require("cors");
@@ -36,15 +39,15 @@ app.set("jwt-secret", config.secret);
 app.set("jwt-social-secret", config.socialSecret);
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Hello World! Welcome to Covid19_diary_server!");
 });
 
 app.use("/user", userRouter);
+app.use("/content", contentRouter);
 app.use("/", contentListRouter);
 
 app.use("/", authMiddleware);
 
-app.use("/content", contentRouter);
 app.use("/mypage", mypageRouter);
 app.use("/comment", commentRouter);
 
