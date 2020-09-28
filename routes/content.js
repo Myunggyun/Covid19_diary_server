@@ -1,14 +1,16 @@
 const express = require("express");
 const router = express.Router();
-
+const authMiddleware = require("../middlewares/auth");
 const { contentController } = require("../controllers");
 const { fileUploadMiddleware } = require("../middlewares/s3FileUpload");
 const { fileDeleteMiddleware } = require("../middlewares/s3FileDelete");
 
 // 작성된 글을 불러올 때 사용합니다.
 router.get("/:contentId", contentController.getContent.get);
-router.post("/:contentId/like", contentController.like.post);
 
+router.use("/", authMiddleware);
+
+router.post("/:contentId/like", contentController.like.post);
 // S3 사진 관련 미들웨어
 router.use("/:contentId", fileDeleteMiddleware);
 router.use("/:contentId", fileUploadMiddleware);

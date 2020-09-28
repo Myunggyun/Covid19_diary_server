@@ -4,8 +4,6 @@ const jwt = require("jsonwebtoken");
 module.exports = {
   get: async (req, res) => {
     const { contentId } = req.params;
-    const token = req.headers["x-access-token"];
-    const decoded = jwt.verify(token, req.app.get("jwt-secret"));
     try {
       const findContent = await db.Content.findOne({
         where: { id: contentId },
@@ -49,28 +47,40 @@ module.exports = {
           [{ model: db.Comment, as: "comment" }, "createdAt", "ASC"],
         ],
       });
-      const userLike = await db.Like.findOne({
-        attributes: ["like"],
-        where: { userId: decoded.id, contentId: contentId },
-      });
-
       const likeNum = await db.Like.count({
         where: { contentId: contentId, like: true },
       });
 
-      if (findContent) {
-        if (!userLike) {
+      const token = req.headers["x-access-token"];
+      //토큰이 없으면
+      if (!token) {
+        if (findContent) {
           res.status(200).send({
             Content: findContent,
             like: likeNum,
             userLike: false,
           });
-        } else {
-          res.status(200).send({
-            Content: findContent,
-            like: likeNum,
-            userLike: userLike.like,
-          });
+        }
+      } else if (token) {
+        const decoded = jwt.verify(token, req.app.get("jwt-secret"));
+        const userLike = await db.Like.findOne({
+          attributes: ["like"],
+          where: { userId: decoded.id, contentId: contentId },
+        });
+        if (findContent) {
+          if (!userLike) {
+            res.status(200).send({
+              Content: findContent,
+              like: likeNum,
+              userLike: false,
+            });
+          } else {
+            res.status(200).send({
+              Content: findContent,
+              like: likeNum,
+              userLike: userLike.like,
+            });
+          }
         }
       } else {
         res.status(404).send("잘못된 요청입니다.");

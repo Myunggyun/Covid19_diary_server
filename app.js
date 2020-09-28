@@ -1,5 +1,5 @@
 const path = require("path");
-require("dotenv").config(path.join(__dirname,"env"));
+require("dotenv").config(path.join(__dirname, "env"));
 
 const express = require("express");
 const app = express();
@@ -43,11 +43,11 @@ app.get("/", (req, res) => {
 });
 
 app.use("/user", userRouter);
+app.use("/content", contentRouter);
 app.use("/", contentListRouter);
 
 app.use("/", authMiddleware);
 
-app.use("/content", contentRouter);
 app.use("/mypage", mypageRouter);
 app.use("/comment", commentRouter);
 
